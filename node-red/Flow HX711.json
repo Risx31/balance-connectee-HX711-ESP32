@@ -1,0 +1,316 @@
+[
+    {
+        "id": "flowBalance",
+        "type": "tab",
+        "label": "Projet Balance",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "mqtt_in_masse",
+        "type": "mqtt in",
+        "z": "flowBalance",
+        "name": "Balance - JSON",
+        "topic": "balance/masse",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "mqtt_broker_iut",
+        "inputs": 0,
+        "x": 140,
+        "y": 140,
+        "wires": [
+            [
+                "json_parser"
+            ]
+        ]
+    },
+    {
+        "id": "json_parser",
+        "type": "json",
+        "z": "flowBalance",
+        "name": "Parser JSON",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 340,
+        "y": 140,
+        "wires": [
+            [
+                "split_masse",
+                "debug_raw"
+            ]
+        ]
+    },
+    {
+        "id": "split_masse",
+        "type": "function",
+        "z": "flowBalance",
+        "name": "Extraire valeurs",
+        "func": "let masse = msg.payload.masse;\nlet incert = msg.payload.incertitude;\nlet mode = msg.payload.mode;\n\n// pour affichage sur les widgets\nreturn [\n  { topic:\"masse\", payload:masse },\n  { topic:\"incertitude\", payload:incert },\n  { topic:\"mode\", payload:mode }\n];",
+        "outputs": 3,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 140,
+        "wires": [
+            [
+                "ui_masse"
+            ],
+            [
+                "ui_incert"
+            ],
+            [
+                "ui_mode",
+                "etat_systeme"
+            ]
+        ]
+    },
+    {
+        "id": "debug_raw",
+        "type": "debug",
+        "z": "flowBalance",
+        "name": "Debug JSON brut",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 370,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "ui_masse",
+        "type": "ui_text",
+        "z": "flowBalance",
+        "group": "grp_affichage",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "Masse",
+        "label": "Masse (g)",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 790,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "ui_incert",
+        "type": "ui_text",
+        "z": "flowBalance",
+        "group": "grp_affichage",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "Incertitude",
+        "label": "Incertitude (g)",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 800,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "ui_mode",
+        "type": "ui_text",
+        "z": "flowBalance",
+        "group": "grp_affichage",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "Mode actif",
+        "label": "Mode actif",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 810,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "btn_tare",
+        "type": "ui_button",
+        "z": "flowBalance",
+        "name": "Bouton Tare",
+        "group": "grp_commandes",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "label": "TARE",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "orange",
+        "className": "",
+        "icon": "fa-balance-scale",
+        "payload": "1",
+        "payloadType": "str",
+        "topic": "",
+        "x": 170,
+        "y": 320,
+        "wires": [
+            [
+                "mqtt_out_tare"
+            ]
+        ]
+    },
+    {
+        "id": "btn_cert",
+        "type": "ui_button",
+        "z": "flowBalance",
+        "name": "Mode Certificat",
+        "group": "grp_commandes",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "CERTIFICAT",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "green",
+        "icon": "fa-file-alt",
+        "payload": "certificat",
+        "payloadType": "str",
+        "topic": "",
+        "x": 200,
+        "y": 380,
+        "wires": [
+            [
+                "mqtt_out_mode"
+            ]
+        ]
+    },
+    {
+        "id": "btn_const",
+        "type": "ui_button",
+        "z": "flowBalance",
+        "name": "Mode Constat",
+        "group": "grp_commandes",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "label": "CONSTAT",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "red",
+        "icon": "fa-clipboard-check",
+        "payload": "constat",
+        "payloadType": "str",
+        "topic": "",
+        "x": 200,
+        "y": 440,
+        "wires": [
+            [
+                "mqtt_out_mode"
+            ]
+        ]
+    },
+    {
+        "id": "mqtt_out_tare",
+        "type": "mqtt out",
+        "z": "flowBalance",
+        "name": "MQTT -> balance/tare",
+        "topic": "balance/tare",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "mqtt_broker_iut",
+        "x": 420,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "mqtt_out_mode",
+        "type": "mqtt out",
+        "z": "flowBalance",
+        "name": "MQTT -> balance/mode",
+        "topic": "balance/mode",
+        "qos": "",
+        "retain": "",
+        "broker": "mqtt_broker_iut",
+        "x": 430,
+        "y": 410,
+        "wires": []
+    },
+    {
+        "id": "etat_systeme",
+        "type": "ui_text",
+        "z": "flowBalance",
+        "group": "grp_etat",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "État système",
+        "label": "État du système",
+        "format": "MQTT actif - Mode : {{msg.payload}}",
+        "layout": "row-spread",
+        "x": 830,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "mqtt_broker_iut",
+        "type": "mqtt-broker",
+        "name": "Broker IUT",
+        "broker": "172.23.28.132",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true
+    },
+    {
+        "id": "grp_affichage",
+        "type": "ui_group",
+        "name": "Affichage principal",
+        "tab": "tab_balance",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "grp_commandes",
+        "type": "ui_group",
+        "name": "Commandes",
+        "tab": "tab_balance",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "grp_etat",
+        "type": "ui_group",
+        "name": "État",
+        "tab": "tab_balance",
+        "order": 3,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "tab_balance",
+        "type": "ui_tab",
+        "name": "Balance connectée",
+        "icon": "dashboard",
+        "order": 1
+    },
+    {
+        "id": "1747e401e2178d83",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6"
+        }
+    }
+]
