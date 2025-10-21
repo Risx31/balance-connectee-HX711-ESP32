@@ -48,7 +48,7 @@ data/*.tmp
 data/*.bak
 *.csv~
 
-# --- Python (scripts temporaires éventuels) ---
+# --- Python  ---
 __pycache__/
 *.pyc
 
@@ -58,7 +58,8 @@ __pycache__/
 *.7z
 *.tar.gz
 
-# --- Autres fichiers inutiles à versionner ---
+# --- fichiers inutiles  ---
 *.bak
 *.old
 *.orig
+
